@@ -6,6 +6,7 @@ Exploring CNN- and ViT-based Encoder-Decoder Network for Medical Image Segmentat
 * [Tensorflow 2.5.0+]
 * Some basic python packages such as Numpy, Scikit-image, SimpleITK, OpenCV......
 * pip install -U segmentation-models==0.2.1
+* pip install keras-unet-collection==0.0.7b0
 
 
 ## Dataset
