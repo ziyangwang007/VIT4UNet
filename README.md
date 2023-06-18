@@ -55,11 +55,18 @@ cd VIT4UNet
 ```
 2. Download the pre-processed dataset
 
-3. Train(15 encoder-decoder segmentation models) and test(dice, iou, accueacy, precision, sensitivity, specificity) the model.
+3. Train(15 encoder-decoder segmentation models) the model.
 
 ```
 python xxx.py
 ```
+
+4. Test(dice, iou, accuracy, precision, sensitivity, specificity) the model
+
+```
+python evaluation.py
+```
+
 
 ## Reference
 ```
