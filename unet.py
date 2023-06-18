@@ -14,7 +14,7 @@ from tensorflow.keras.backend import max
 
 from keras_unet_collection import models, base, utils, losses
 
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 # def dice_coef(y_true, y_pred):
 #     y_true = y_true[...]
@@ -64,130 +64,130 @@ if first_time_running:
 
 #############################################################################################################################################
 
-unet = models.unet_2d((128, 128, 3), [32, 64, 128, 256, 512], n_labels=3,
+unet = models.unet_2d((256, 256, 1), [32, 64, 128, 256, 512], n_labels=3,
                       stack_num_down=2, stack_num_up=1,
                       output_activation='Softmax', 
                       batch_norm=True, pool='max', unpool=False, name='unet')
+unet.summary()
 
+# def hybrid_loss(y_true, y_pred):
 
-def hybrid_loss(y_true, y_pred):
-
-    loss_focal = losses.focal_tversky(y_true, y_pred, alpha=0.5, gamma=4/3)
-    loss_iou = losses.iou_seg(y_true, y_pred)
+#     loss_focal = losses.focal_tversky(y_true, y_pred, alpha=0.5, gamma=4/3)
+#     loss_iou = losses.iou_seg(y_true, y_pred)
     
-    # (x) 
-    #loss_ssim = losses.ms_ssim(y_true, y_pred, max_val=1.0, filter_size=4)
+#     # (x) 
+#     #loss_ssim = losses.ms_ssim(y_true, y_pred, max_val=1.0, filter_size=4)
     
-    return loss_focal+loss_iou #+loss_ssim
+#     return loss_focal+loss_iou #+loss_ssim
 
 
-def input_data_process(input_array):
-    '''converting pixel vales to [0, 1]'''
-    return input_array/255.
+# def input_data_process(input_array):
+#     '''converting pixel vales to [0, 1]'''
+#     return input_array/255.
 
-def target_data_process(target_array):
-    '''Converting tri-mask of {1, 2, 3} to three categories.'''
-    return keras.utils.to_categorical(target_array-1)
+# def target_data_process(target_array):
+#     '''Converting tri-mask of {1, 2, 3} to three categories.'''
+#     return keras.utils.to_categorical(target_array-1)
 
-sample_names = np.array(sorted(glob(data_dir+'images/*.jpg')))
-label_names = np.array(sorted(glob(data_dir+'annotations/trimaps/*.png')))
+# sample_names = np.array(sorted(glob(data_dir+'images/*.jpg')))
+# label_names = np.array(sorted(glob(data_dir+'annotations/trimaps/*.png')))
 
-L = len(sample_names)
-ind_all = utils.shuffle_ind(L)
+# L = len(sample_names)
+# ind_all = utils.shuffle_ind(L)
 
-L_train = int(0.8*L); L_valid = int(0.1*L); L_test = L - L_train - L_valid
-ind_train = ind_all[:L_train]; ind_valid = ind_all[L_train:L_train+L_valid]; ind_test = ind_all[L_train+L_valid:]
-print("Training:validation:testing = {}:{}:{}".format(L_train, L_valid, L_test))
+# L_train = int(0.8*L); L_valid = int(0.1*L); L_test = L - L_train - L_valid
+# ind_train = ind_all[:L_train]; ind_valid = ind_all[L_train:L_train+L_valid]; ind_test = ind_all[L_train+L_valid:]
+# print("Training:validation:testing = {}:{}:{}".format(L_train, L_valid, L_test))
 
-valid_input = input_data_process(utils.image_to_array(sample_names[ind_valid], size=128, channel=3))
-valid_target = target_data_process(utils.image_to_array(label_names[ind_valid], size=128, channel=1))
-test_input = input_data_process(utils.image_to_array(sample_names[ind_test], size=128, channel=3))
-test_target = target_data_process(utils.image_to_array(label_names[ind_test], size=128, channel=1))
+# valid_input = input_data_process(utils.image_to_array(sample_names[ind_valid], size=128, channel=3))
+# valid_target = target_data_process(utils.image_to_array(label_names[ind_valid], size=128, channel=1))
+# test_input = input_data_process(utils.image_to_array(sample_names[ind_test], size=128, channel=3))
+# test_target = target_data_process(utils.image_to_array(label_names[ind_test], size=128, channel=1))
 
-train_input = input_data_process(utils.image_to_array(sample_names[ind_train], size=128, channel=3))
-train_target = target_data_process(utils.image_to_array(label_names[ind_train], size=128, channel=1))
+# train_input = input_data_process(utils.image_to_array(sample_names[ind_train], size=128, channel=3))
+# train_target = target_data_process(utils.image_to_array(label_names[ind_train], size=128, channel=1))
 
-model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=os.path.join(weight_dir, '2dunetcallback.h5'),monitor='val_loss', save_best_only=True)
-
-
-unet.compile(loss=[hybrid_loss, hybrid_loss, hybrid_loss, hybrid_loss, hybrid_loss],
-                  loss_weights=[0.25, 0.25, 0.25, 0.25, 1.0],
-                  optimizer=keras.optimizers.Adam(learning_rate=1e-4))
-
-unet.fit(
-    train_input, train_target,
-    batch_size=32, epochs=10,
-    verbose=2, shuffle=True,
-    validation_data=(valid_input, valid_target),
-    callbacks=[model_checkpoint])
+# model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=os.path.join(weight_dir, '2dunetcallback.h5'),monitor='val_loss', save_best_only=True)
 
 
+# unet.compile(loss=[hybrid_loss, hybrid_loss, hybrid_loss, hybrid_loss, hybrid_loss],
+#                   loss_weights=[0.25, 0.25, 0.25, 0.25, 1.0],
+#                   optimizer=keras.optimizers.Adam(learning_rate=1e-4))
 
-unet.load_weights(os.path.join(weight_dir, '2dunetcallback.h5'))
-temp_out = unet.predict([test_input,])
-# y_pred = temp_out[-1]
-y_pred = temp_out
-print('Testing set cross-entropy loss = {}'.format(np.mean(keras.losses.categorical_crossentropy(test_target, y_pred))))
-print('Testing set focal Tversky loss = {}'.format(np.mean(losses.focal_tversky(test_target, y_pred))))
-print('Testing set IoU loss = {}'.format(np.mean(losses.iou_seg(test_target, y_pred))))
+# unet.fit(
+#     train_input, train_target,
+#     batch_size=32, epochs=10,
+#     verbose=2, shuffle=True,
+#     validation_data=(valid_input, valid_target),
+#     callbacks=[model_checkpoint])
 
 
 
+# unet.load_weights(os.path.join(weight_dir, '2dunetcallback.h5'))
+# temp_out = unet.predict([test_input,])
+# # y_pred = temp_out[-1]
+# y_pred = temp_out
+# print('Testing set cross-entropy loss = {}'.format(np.mean(keras.losses.categorical_crossentropy(test_target, y_pred))))
+# print('Testing set focal Tversky loss = {}'.format(np.mean(losses.focal_tversky(test_target, y_pred))))
+# print('Testing set IoU loss = {}'.format(np.mean(losses.iou_seg(test_target, y_pred))))
 
 
 
 
 
-temp_out = unet.predict([test_input,])
-# y_pred = temp_out[-1]
-y_pred = temp_out
-d = y_pred
-d = np.squeeze(d)
-print(np.shape(d))
-d = np.where(d > 0.5, 1., 0.)
-test_target = target_data_process(utils.image_to_array(label_names[ind_test], size=128, channel=1))
 
-a = test_target
-a = np.squeeze(a)
-print('*' * 50)
-print(np.shape(a))
-a = np.where(a > 0.5, 1., 0.)
 
-dice = np.sum(d[a == 1]) * 2.0 / (np.sum(d) + np.sum(a))
-# dice = dice_coef(y_true=a, y_pred=d)
-print('Dice similarity score is {}'.format(dice))
 
-IOU = dice / (2 - dice)
-print('IOU score is {}'.format(IOU))
+# temp_out = unet.predict([test_input,])
+# # y_pred = temp_out[-1]
+# y_pred = temp_out
+# d = y_pred
+# d = np.squeeze(d)
+# print(np.shape(d))
+# d = np.where(d > 0.5, 1., 0.)
+# test_target = target_data_process(utils.image_to_array(label_names[ind_test], size=128, channel=1))
 
-true_labels = a
-pred_labels = d
-# True Positive (TP): we predict a label of 1 (positive), and the true label is 1.
-TP = np.sum(np.logical_and(pred_labels == 1, true_labels == 1))
+# a = test_target
+# a = np.squeeze(a)
+# print('*' * 50)
+# print(np.shape(a))
+# a = np.where(a > 0.5, 1., 0.)
 
-# True Negative (TN): we predict a label of 0 (negative), and the true label is 0.
-TN = np.sum(np.logical_and(pred_labels == 0, true_labels == 0))
+# dice = np.sum(d[a == 1]) * 2.0 / (np.sum(d) + np.sum(a))
+# # dice = dice_coef(y_true=a, y_pred=d)
+# print('Dice similarity score is {}'.format(dice))
 
-# False Positive (FP): we predict a label of 1 (positive), but the true label is 0.
-FP = np.sum(np.logical_and(pred_labels == 1, true_labels == 0))
+# IOU = dice / (2 - dice)
+# print('IOU score is {}'.format(IOU))
 
-# False Negative (FN): we predict a label of 0 (negative), but the true label is 1.
-FN = np.sum(np.logical_and(pred_labels == 0, true_labels == 1))
+# true_labels = a
+# pred_labels = d
+# # True Positive (TP): we predict a label of 1 (positive), and the true label is 1.
+# TP = np.sum(np.logical_and(pred_labels == 1, true_labels == 1))
 
-print('TP:{}, FP:{}, TN:{}, FN:{}'.format(TP, FP, TN, FN))
-TP = float(TP)
-FP = float(FP)
-TN = float(TN)
-FN = float(FN)
+# # True Negative (TN): we predict a label of 0 (negative), and the true label is 0.
+# TN = np.sum(np.logical_and(pred_labels == 0, true_labels == 0))
 
-accuracy = (TP + TN) / (TP + FN + FP + TN)
-print('accuracy:{}'.format(accuracy))
+# # False Positive (FP): we predict a label of 1 (positive), but the true label is 0.
+# FP = np.sum(np.logical_and(pred_labels == 1, true_labels == 0))
 
-precision = TP / (TP + FP)
-print('precision:{}'.format(precision))
+# # False Negative (FN): we predict a label of 0 (negative), but the true label is 1.
+# FN = np.sum(np.logical_and(pred_labels == 0, true_labels == 1))
 
-recall = TP / (TP + FN)
-print('recall:{}'.format(recall))
+# print('TP:{}, FP:{}, TN:{}, FN:{}'.format(TP, FP, TN, FN))
+# TP = float(TP)
+# FP = float(FP)
+# TN = float(TN)
+# FN = float(FN)
 
-specificity = TN / (TN + FP)
-print('specificity:{}'.format(specificity))
+# accuracy = (TP + TN) / (TP + FN + FP + TN)
+# print('accuracy:{}'.format(accuracy))
+
+# precision = TP / (TP + FP)
+# print('precision:{}'.format(precision))
+
+# recall = TP / (TP + FN)
+# print('recall:{}'.format(recall))
+
+# specificity = TN / (TN + FP)
+# print('specificity:{}'.format(specificity))

@@ -14,7 +14,7 @@ from tensorflow.keras.backend import max
 
 from keras_unet_collection import models, base, utils, losses
 
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 # def dice_coef(y_true, y_pred):
 #     y_true = y_true[...]
@@ -61,13 +61,13 @@ if first_time_running:
 
 
 
-unet2plus = models.unet_plus_2d((128, 128, 3), [32, 64, 128, 256, 512], n_labels=3,
+unet2plus = models.unet_plus_2d((256, 256, 1), [32, 64, 128, 256, 512], n_labels=3,
                             stack_num_down=2, stack_num_up=2,
                             activation='ReLU', output_activation='Softmax', 
                             batch_norm=True, pool=True, unpool=True, deep_supervision=True, name='unet2plus')
 
 
-
+unet2plus.summary()
 #############################################################################################################################################
 # unet2plus = models.unet_3plus_2d((128, 128, 3), n_labels=2, filter_num_down=[64, 128, 256, 512], 
 #                              filter_num_skip='auto', filter_num_aggregate='auto', 
