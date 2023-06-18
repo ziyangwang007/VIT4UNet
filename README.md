@@ -12,16 +12,26 @@ Exploring CNN- and ViT-based Encoder-Decoder Network for Medical Image Segmentat
 ## Dataset
 
 1. CT Spine Segmentation (10 patients with around 500 slices each) 
+
 The original CT Spine dataset is available to access at [Link](http://spineweb.digitalimaginggroup.ca/Index.php?n=Main.Datasets#Dataset_2.3A_Spine_and_Vertebrae_Segmentation), and we provide preprocessed numpy format suitable to directly use in ViT4UNet at [Google Drive](https://drive.google.com/file/d/1Qe98-FUMpSkjF0gDi2PFeAlxq5TVi4LJ/view?usp=sharing)
 
 2. CT COVID 19 Segmentation (around 1000 slices from >40 patients)
+
 The original CT Spine dataset is available to access at Kaggle [Link](https://www.kaggle.com/competitions/covid-segmentation), and we provide preprocessed numpy format suitable to directly use in ViT4UNet at [Google Drive](https://drive.google.com/file/d/1kDhAdaxIz11oeYD6rtdSNtVTsqpESqXc/view?usp=sharing)
 
 3. MRI Cardiac Segmentation (100 patients)
+
 The original MRI Cardiac dataset is available to access at [Link](https://www.creatis.insa-lyon.fr/Challenge/acdc/), and we provide preprocessed h5 format to use in ViT4UNet at [Google Drive](https://drive.google.com/file/d/1F3JzBSIURtFJkfcExBcT6Hu7Ar5_f8uv/view?usp=drive_link)
 
 4. Ultrasound Nerve Segmentation (6000 slices)
+
 The original Ultrasound Nerve dataset is available to access at Kaggle [Link](https://www.kaggle.com/c/ultrasound-nerve-segmentation), and we provide preprocessed numpy format suitable to directly use in ViT4UNet at [Google Drive](https://drive.google.com/file/d/1-lmKpdhcA2ItKqnmQpygJITEEQf3EQqq/view?usp=sharing)
+
+5. MRI Brain Tumor Segmentation 
+
+The original MRI Brain Tumor dataset is available to access at [Link](https://www.med.upenn.edu/cbica/brats-2019/), and we provide preprocessed h5 format to use in ViT4UNet at [Google Drive](https://drive.google.com/file/d/1erKoNzknobgn7gZYEXylsJFYqq-gc6xQ/view)
+
+
 
 
 ## Preprocessing Data
@@ -67,6 +77,14 @@ python xxx.py
   booktitle={2021 43rd Annual International Conference of the IEEE Engineering in Medicine \& Biology Society (EMBC)},
   year={2021},
   organization={IEEE}
+}
+
+@inproceedings{wang2022triple,
+  title={Triple-view feature learning for medical image segmentation},
+  author={Wang, Ziyang and Voiculescu, Irina},
+  booktitle={2022 MICCAI Workshop Resource-Efficient Medical Image Analysis},
+  year={2022},
+  organization={Springer}
 }
 ```
 
