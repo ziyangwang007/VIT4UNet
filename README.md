@@ -1,10 +1,11 @@
 ## ViT4UNet
-Exploring CNN- and ViT-based Encoder-Decoder Network for Medical Image Segmentation
+Exploring CNN- and ViT-based Encoder-Decoder Network for Medical Image Segmentation.
 
 
 ## Requirements
 * [Tensorflow 2.5.0+]
 * Some basic python packages such as Numpy, Scikit-image, SimpleITK, OpenCV......
+* pip install -U segmentation-models==0.2.1
 
 
 ## Dataset
@@ -70,4 +71,4 @@ python xxx.py
 
 ## Acknowledgement
 
-This code is mainly based on [keras_unet_collection](https://github.com/yingkaisha/keras-unet-collection), [segmentation_models](https://github.com/qubvel/segmentation_models).
+This code is mainly based on [keras_unet_collection](https://github.com/yingkaisha/keras-unet-collection), [segmentation_models](https://github.com/qubvel/segmentation_models), [CBAM](https://github.com/kobiso/CBAM-tensorflow).
